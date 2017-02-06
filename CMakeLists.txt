@@ -1,9 +1,10 @@
-cmake_minimum_required(VERSION 2.6.4)
+cmake_minimum_required(VERSION 3.1)
 
 project(CStreamIO)
 
 enable_testing()
 
+set(CMAKE_CXX_STANDARD 11)
 include_directories(src)
 include_directories(include)
 
