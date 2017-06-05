@@ -13,7 +13,7 @@ void utf8_decoder (
 
 // UTF8 encoder
 void utf8_encoder (
-  char32_t *src_buf,
+  const char32_t *src_buf,
   unsigned int offset,
   unsigned int count,
   ByteBuffer *dest,

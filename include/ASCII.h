@@ -16,7 +16,6 @@ inline void ascii_decoder (
 	int dp = offset;
 	int dl = offset + count;
 
-  unsigned int n = 0;
   while((sp < sl) && (dp < dl)) {
     dest_buf[dp++] = (char32_t)(sa[sp++] & 0xFF);
   }

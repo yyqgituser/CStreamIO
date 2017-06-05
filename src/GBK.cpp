@@ -88,7 +88,7 @@ static inline int encodeDouble(unsigned int ch) {
 }
 
 void gbk_encoder (
-    char32_t *src_buf,
+  const char32_t *src_buf,
   unsigned int offset,
   unsigned int count,
   ByteBuffer *dest,

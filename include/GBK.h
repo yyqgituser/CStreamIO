@@ -14,7 +14,7 @@ void gbk_decoder (
 
 // BGK encoder
 void gbk_encoder (
-  char32_t *src_buf,
+  const char32_t *src_buf,
   unsigned int offset,
   unsigned int count,
   ByteBuffer *dest,

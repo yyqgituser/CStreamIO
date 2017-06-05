@@ -28,7 +28,7 @@ TEST(TextWriterTest, TextWriterTestCaseUTF8) {
   ifs.close();
 
   EXPECT_EQ(src_n, dst_n);
-  for(int i = 0; i < src_n; i++) {
+  for(unsigned int i = 0; i < src_n; i++) {
     EXPECT_EQ(src_buf[i], dst_buf[i]);
   }
 }
@@ -52,7 +52,7 @@ TEST(TextWriterTest, TextWriterTestCaseGBK) {
   ifs.close();
 
   EXPECT_EQ(src_n, dst_n);
-  for(int i = 0; i < src_n; i++) {
+  for(unsigned int i = 0; i < src_n; i++) {
     EXPECT_EQ(src_buf[i], dst_buf[i]);
   }
 }

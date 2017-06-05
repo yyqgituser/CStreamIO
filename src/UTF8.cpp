@@ -28,8 +28,8 @@ void utf8_decoder (
   char *sa = src->getBuffer();
   int sp = src->getPosition();
   int sl = src->getLimit();
-	int dp = offset;
-	int dl = offset + count;
+  int dp = offset;
+  int dl = offset + count;
 
   while (sp < sl && dp < dl) {
     int b1 = sa[sp];
@@ -181,7 +181,7 @@ return_exit:
 }
 
 void utf8_encoder (
-  char32_t *src_buf,
+  const char32_t *src_buf,
   unsigned int offset,
   unsigned int count,
   ByteBuffer *dest,

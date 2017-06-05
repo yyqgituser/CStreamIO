@@ -27,11 +27,11 @@ private:
   // lower layer input stream
   istream *in;
 
-  // decoder
-  charset_decoder decoder;
-  
   // bytes buffer
   ByteBuffer bb;
+
+  // decoder
+  charset_decoder decoder;
 
 public:
   TextReader(istream *inputStream, charset_decoder pdecoder) :
@@ -56,6 +56,11 @@ private:
       // buffer is too small
       throw BufferTooSmallException();
     }
+
+    if(!in->good()) {
+      return -1;
+    }
+
     in->read(bb.getBuffer() + limit, nfree);
     int nread = in->gcount();
     if(nread == -1) {

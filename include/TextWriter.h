@@ -12,7 +12,7 @@ using std::ostream;
 // all char in src_buf will be encode into dest byte buffer if the free
 // space was enough.
 typedef void (*charset_encoder) (
-  char32_t *src_buf, // source characters
+  const char32_t *src_buf, // source characters
   unsigned int offset, // from which to start encoding
   unsigned int count, // count of chars
   ByteBuffer *dest, // destination byte buffer, start from getPosition() until to getCapacity()
@@ -25,11 +25,11 @@ private:
   // lower layer output stream
   ostream *out;
 
-  // encoder
-  charset_encoder encoder;
-  
   // bytes buffer
   ByteBuffer bb;
+
+  // encoder
+  charset_encoder encoder;
 
 public:
   TextWriter(ostream *outputStream, charset_encoder pencoder) :
@@ -51,7 +51,7 @@ public:
 public:  
   // writes count charaters from the specified offset to the output stream.
   // currently, this function can't support surrogate pairs.
-  void write(char32_t* char_buf, unsigned int offset, unsigned int count) {
+  void write(const char32_t* char_buf, unsigned int offset, unsigned int count) {
     unsigned int nencoded = 0;
     encoder(char_buf, offset, count, &bb, &nencoded);
     if(nencoded == 0) {
