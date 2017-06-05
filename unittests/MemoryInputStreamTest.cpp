@@ -4,7 +4,7 @@
 #include <cstring>
 
 TEST(MemoryInputStreamTest, MemoryInputStreamTestCase1) {
-  const unsigned char *data = (const unsigned char *)"a1234567890";
+  const char *data = "a1234567890";
   int len = (int)std::strlen((const char*)data);
   MemoryInputStream in(data, len);
   char buf[20];

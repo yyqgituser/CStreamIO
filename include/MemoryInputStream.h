@@ -6,7 +6,7 @@
 class MemoryInputStream {
 private:
   // buffer
-  const unsigned char* data;
+  const char* data;
 
   // end of data
   unsigned int limit;
@@ -15,7 +15,7 @@ private:
   unsigned int position;
 
 public:
-  MemoryInputStream(const unsigned char *mem, unsigned int size) :
+  MemoryInputStream(const char *mem, unsigned int size) :
     data(mem), limit(size), position(0) {
   }
 
