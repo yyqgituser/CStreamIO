@@ -2,9 +2,10 @@
 #define _TEXT_READER_H
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
 #include "ByteBuffer.h"
-#include "BufferTooSmallException.h"
 
 using std::istream;
 
@@ -53,8 +54,8 @@ private:
     unsigned int limit = bb.getLimit();
     unsigned int nfree = bb.getCapacity() - limit;
     if(nfree == 0) {
-      // buffer is too small
-      throw BufferTooSmallException();
+      fputs ("buffer too small exception\n", stderr);
+      abort();
     }
 
     if(!in->good()) {

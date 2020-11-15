@@ -2,9 +2,10 @@
 #define _TEXT_WRITER_H
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 
 #include "ByteBuffer.h"
-#include "BufferTooSmallException.h"
 
 using std::ostream;
 
@@ -60,7 +61,8 @@ public:
       bb.setPosition(0);
       encoder(char_buf, offset, count, &bb, &nencoded);
       if(nencoded == 0) {
-        throw BufferTooSmallException();
+        fputs ("buffer too small exception\n", stderr);
+        abort();
       }
     }
     offset += nencoded;
@@ -72,7 +74,8 @@ public:
       bb.setPosition(0);
       encoder(char_buf, offset, count, &bb, &nencoded);
       if(nencoded == 0) {
-        throw BufferTooSmallException();
+        fputs ("buffer too small exception\n", stderr);
+        abort();
       }
       offset += nencoded;
       count -= nencoded;

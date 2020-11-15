@@ -1,6 +1,9 @@
 #ifndef _BYTE_BUFFER_H
 #define _BYTE_BUFFER_H
 
+#include <cstdio>
+#include <cstdlib>
+
 class ByteBuffer {
 private:
   // current position
@@ -36,11 +39,12 @@ public:
   }
   
   inline void setPosition(unsigned int newPosition) {
-	  if (newPosition > limit) {
-      throw;
-	  }
+    if (newPosition > limit) {
+      fputs ("index out of bound\n", stderr);
+      abort();
+    }
 
-	  position = newPosition;
+    position = newPosition;
   }
   
   inline unsigned int getLimit() {
