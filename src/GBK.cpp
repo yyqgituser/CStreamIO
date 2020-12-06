@@ -45,10 +45,10 @@ void gbk_decoder (
   unsigned int *ndecoded ) {    
 
   char *sa = src->getBuffer();
-  int sp = src->getPosition();
-  int sl = src->getLimit();
-  int dp = offset;
-  int dl = offset + count;
+  unsigned int sp = src->getPosition();
+  unsigned int sl = src->getLimit();
+  unsigned int dp = offset;
+  unsigned  int dl = offset + count;
 
   while (sp < sl && dp < dl) {
     int b1, b2;
@@ -97,8 +97,8 @@ void gbk_encoder (
   unsigned int sp = offset;
   unsigned int sl = offset + count;
   char* da = dest->getBuffer();
-  int dp = dest->getPosition();
-  int dl = dest->getLimit();
+  unsigned int dp = dest->getPosition();
+  unsigned int dl = dest->getLimit();
 
   while (sp < sl) {
     unsigned int c = src_buf[sp];
