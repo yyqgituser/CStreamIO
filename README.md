@@ -6,4 +6,5 @@ A lightweight C++ stream IO library, there are some examples in unittests direct
   #cd build  
   #cmake ..  
   #make  
+  #make test  
 
