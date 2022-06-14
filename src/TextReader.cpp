@@ -46,6 +46,9 @@ int TextReader::read(char32_t* dest_buf, unsigned int offset, unsigned int count
       if(bb.hasRemaining()) {
         throw std::runtime_error("encoding error");
       }
+      if (total_ndecoded == 0) {
+        return -1;
+      }
       return total_ndecoded;
     }
     decoder(&bb, dest_buf, offset, count, &ndecoded);
