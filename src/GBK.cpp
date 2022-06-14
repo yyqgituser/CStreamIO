@@ -1,5 +1,5 @@
 #include "GBK.h"
-#include "surrogate.h"
+#include <stdexcept>
 
 #define DECODER_REPLACE_CHAR 0xFFFD
 
@@ -21,17 +21,17 @@ extern unsigned short *GBK_ENCODER_INDEX2[];
 
 extern int GBK_ENCODER_INDEX1_LEN;
 
-static inline unsigned int decodeSingle(int b) {
+static inline int decodeSingle(int b) {
   if (b >= 0) {
       return (unsigned int)b;
   }
-  return DECODER_REPLACE_CHAR;
+  return -1;
 }
 
 static inline unsigned int decodeDouble(int byte1, int byte2) {
   if (((byte1 < 0) || (byte1 > GBK_DECODER_INDEX1_LEN))
       || ((byte2 < BYTE2_START) || (byte2 > BYTE2_END)))
-      return DECODER_REPLACE_CHAR;
+      throw std::runtime_error("GBK code decode error: " + std::to_string(byte1) + ", " + std::to_string(byte2));
 
   int n = (GBK_DECODER_INDEX1[byte1] & 0xf) * (BYTE2_END - BYTE2_START + 1) + (byte2 - BYTE2_START);
   return (unsigned int)GBK_DECODER_INDEX2[GBK_DECODER_INDEX1[byte1] >> 4][n];
@@ -44,25 +44,25 @@ void gbk_decoder (
   unsigned int count,
   unsigned int *ndecoded ) {    
 
-  char *sa = src->getBuffer();
-  unsigned int sp = src->getPosition();
-  unsigned int sl = src->getLimit();
+  char *src_buf = src->buffer;
+  unsigned int sp = src->begin;
+  unsigned int sl = src->end;
   unsigned int dp = offset;
   unsigned  int dl = offset + count;
 
   while (sp < sl && dp < dl) {
     int b1, b2;
 
-    b1 = sa[sp];
+    b1 = src_buf[sp];
     int inputSize = 1;
 
-    unsigned int c = decodeSingle(b1);
-    if(c == DECODER_REPLACE_CHAR) {
+    int c = decodeSingle(b1);
+    if(c == -1) {
       b1 &= 0xff;
       if (sl - sp < 2) {
         break;
       }
-      b2 = sa[sp + 1] & 0xff;
+      b2 = src_buf[sp + 1] & 0xff;
       c = decodeDouble(b1, b2);
       inputSize = 2;
     }
@@ -71,7 +71,7 @@ void gbk_decoder (
     sp += inputSize;
   }
 
-  src->setPosition(sp);
+  src->begin = sp;
   *ndecoded = (dp - offset);  
 }
 
@@ -96,19 +96,19 @@ void gbk_encoder (
 
   unsigned int sp = offset;
   unsigned int sl = offset + count;
-  char* da = dest->getBuffer();
-  unsigned int dp = dest->getPosition();
-  unsigned int dl = dest->getLimit();
+  char* dest_buf = dest->buffer;
+  unsigned int dp = dest->end;
+  unsigned int dl = dest->capacity;
 
   while (sp < sl) {
-    unsigned int c = src_buf[sp];
+    char32_t c = src_buf[sp];
 
     int b = encodeSingle(c);
     if (b != -1) { // Single Byte
       if(dl - dp < 1) {
-        goto return_exit;
+        break;
       }
-      da[dp++] = (char)b;
+      dest_buf[dp++] = (char)b;
       sp++;
       continue;
     }
@@ -116,21 +116,16 @@ void gbk_encoder (
     int ncode  = encodeDouble(c);
     if (ncode != 0 && c != 0x0 ) {
       if (dl - dp < 2) {
-        goto return_exit;
+        break;
       }
-      da[dp++] = (char) ((ncode & 0xff00) >> 8);
-      da[dp++] = (char) (ncode & 0xff);
+      dest_buf[dp++] = (char) ((ncode & 0xff00) >> 8);
+      dest_buf[dp++] = (char) (ncode & 0xff);
       sp++;
       continue;
+    } else {
+      throw std::runtime_error("GBK code encode error: " + std::to_string(c));
     }
-    if (dl - dp < 1) {
-     goto return_exit;
-    }
-    da[dp++] = ENCODER_REPLACE_BYTE;
-    sp++;
   }
-
-return_exit:
-  dest->setPosition(dp);
+  dest->end = dp;
   *nencoded = (sp - offset);  
 }

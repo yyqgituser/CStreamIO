@@ -3,7 +3,8 @@
 
 #include "ByteBuffer.h"
 
-// UTF8 decoder
+#define MAX_CODE_POINT 0x10ffff
+
 void utf8_decoder (
   ByteBuffer *src,
   char32_t *dest_buf,
@@ -11,7 +12,6 @@ void utf8_decoder (
   unsigned int count,
   unsigned int *ndecoded);
 
-// UTF8 encoder
 void utf8_encoder (
   const char32_t *src_buf,
   unsigned int offset,

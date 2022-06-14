@@ -3,96 +3,84 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <stdexcept>
 
 class ByteBuffer {
-private:
-  // current position
-  unsigned int position;
+public:
+  // beginning of data(inclusive)
+  unsigned int begin;
 
-  // end of data
-  unsigned int limit;
+  // end of data(exclusive)
+  unsigned int end;
 
-  // buf size
+  // buffer size
   unsigned int capacity;
 
   // buffer
-  char* buf;
+  char* buffer;
 
 public:
-  ByteBuffer(unsigned int cap) :
-    position(0), limit(0), capacity(cap) {    
-    buf = new char[capacity];
+  ByteBuffer(unsigned int capacity) :
+    begin(0), end(0), capacity(capacity) {    
+    buffer = new char[capacity];
   }
 
   ~ByteBuffer() {
-    if(buf != (char *)0) {
-      delete[] buf;
+    if(buffer != (char *)0) {
+      delete[] buffer;
     }
   }
 
   inline char get() {
-    return buf[position++];
-  }
-  
-  inline unsigned int getPosition() {
-    return position;
-  }
-  
-  inline void setPosition(unsigned int newPosition) {
-    if (newPosition > limit) {
-      fputs ("index out of bound\n", stderr);
-      abort();
+    if (begin > end) {
+      throw std::runtime_error("index out of bound: " + std::to_string(begin));
     }
+    return buffer[begin++];
+  }
 
-    position = newPosition;
-  }
-  
-  inline unsigned int getLimit() {
-    return limit;
-  }
-  
-  inline void setLimit(unsigned int newLimit) {
-    if (newLimit > capacity) {
-      throw;
+  inline void skip(unsigned int length) {
+    if (begin + length > end) {
+        throw std::runtime_error("index out of bound: " + std::to_string(end));
     }
-
-    limit = newLimit;
-
-    if (position > limit) {
-      position = limit;
-    }
+    begin += length;
   }
   
-  inline unsigned int getCapacity() {
-    return capacity;
+  inline void append(unsigned int length) {
+	  if (end + length > capacity) {
+		  throw std::runtime_error("index out of bound: " + std::to_string(capacity));
+	  }
+	  end += length;
   }
   
-  inline char* getBuffer() {
-    return buf;
-  }
-
   inline bool hasRemaining() {
-    return position < limit;
+    return begin < end;
   }
-
-  // return numbers of elements in the buffer.
+  
+  inline bool hasFreeSpace() {
+    return end < capacity;
+  }
+  
   inline unsigned int remaining() {
-    return limit - position;
+    return end - begin;
   }
 
   inline unsigned int freeSpace() {
-    return capacity - limit;
+    return capacity - end;
   }
-  
-  // compact this buffer
-  // copy bytes from current position to beginning of the buffer
+
   inline void compact() {
     unsigned int i, j;
-
-    for(i = position, j = 0; i < limit; i++) {
-      buf[j++] = buf[i];
+    if (begin == 0) {
+      return;
     }
-    position = 0; limit = j;
+    for(i = begin, j = 0; i < end; i++) {
+      buffer[j++] = buffer[i];
+    }
+    begin = 0; end = j;
+  }
+
+  inline void clear() {
+    begin = end = 0;
   }
 
 };

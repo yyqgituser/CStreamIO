@@ -8,24 +8,19 @@
 
 TEST(TextWriterTest, TextWriterTestCaseUTF8) {
   std::ofstream ofs("TextWriterTestCaseUTF8.txt", std::ios::out|std::ios::binary|std::ios::trunc);
-  TextWriter writer(&ofs, utf8_encoder);
+  TextWriter writer(&ofs, utf8_encoder, 10);
 
-  char32_t src_buf[] = U"美英法对利比亚发动空袭 卡扎菲欲报复";
-  unsigned int src_n = 10;
+  char32_t src_buf[] = U"\U0001F607士大夫士大夫精神放松的防卫任务\U0001F607士大夫士大夫精神放松的防卫任务\U0001F607士大夫士大夫精神放松的防卫任务";
+  unsigned int src_n = sizeof(src_buf) / sizeof(src_buf[0]) - 1;
   writer.write(src_buf, 0, src_n);
 
   writer.flush();
-  ofs.close();
 
-  char32_t dst_buf[20];
+  char32_t dst_buf[200];
   std::ifstream ifs("TextWriterTestCaseUTF8.txt", std::ios::in|std::ios::binary);
-  TextReader reader(&ifs, utf8_decoder);
+  TextReader reader(&ifs, utf8_decoder, 10, true); 
 
-  int skip = reader.skipUTF8BOM();
-  EXPECT_EQ(skip, 0);
-
-  unsigned int dst_n = reader.read(dst_buf, 0, 20);
-  ifs.close();
+  unsigned int dst_n = reader.read(dst_buf, 0, 200);
 
   EXPECT_EQ(src_n, dst_n);
   for(unsigned int i = 0; i < src_n; i++) {
@@ -35,21 +30,19 @@ TEST(TextWriterTest, TextWriterTestCaseUTF8) {
 
 TEST(TextWriterTest, TextWriterTestCaseGBK) {
   std::ofstream ofs("TextWriterTestCaseGBK.txt", std::ios::out|std::ios::binary|std::ios::trunc);
-  TextWriter writer(&ofs, gbk_encoder);
+  TextWriter writer(&ofs, gbk_encoder, 10);
 
-  char32_t src_buf[] = U"美英法对利比亚发动空袭 卡扎菲欲报复";
-  unsigned int src_n = 10;
+  char32_t src_buf[] = U"士大夫士大夫精神放松的防卫任务 士大夫士大夫精神放松的防卫任务 士大夫士大夫精神放松的防卫任务";
+  unsigned int src_n = sizeof(src_buf) / sizeof(src_buf[0]) - 1;
   writer.write(src_buf, 0, src_n);
 
   writer.flush();
-  ofs.close();
 
-  char32_t dst_buf[20];
+  char32_t dst_buf[200];
   std::ifstream ifs("TextWriterTestCaseGBK.txt", std::ios::in|std::ios::binary);
-  TextReader reader(&ifs, gbk_decoder);
+  TextReader reader(&ifs, gbk_decoder, 10);
 
-  unsigned int dst_n = reader.read(dst_buf, 0, 20);
-  ifs.close();
+  unsigned int dst_n = reader.read(dst_buf, 0, 200);
 
   EXPECT_EQ(src_n, dst_n);
   for(unsigned int i = 0; i < src_n; i++) {

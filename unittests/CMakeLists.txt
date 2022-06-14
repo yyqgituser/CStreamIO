@@ -12,5 +12,6 @@ function(add_unit_test name)
 endfunction()
 
 add_unit_test(ASCIITest)
+add_unit_test(UTF8Test)
 add_unit_test(TextWriterTest)
 add_unit_test(MemoryInputStreamTest)
