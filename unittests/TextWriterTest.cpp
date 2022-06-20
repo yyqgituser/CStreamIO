@@ -1,14 +1,12 @@
 #include "TextWriter.h"
 #include "TextReader.h"
-#include "UTF8.h"
-#include "GBK.h"
 
 #include "gtest/gtest.h"
 #include <fstream>
 
 TEST(TextWriterTest, TextWriterTestCaseUTF8) {
   std::ofstream ofs("TextWriterTestCaseUTF8.txt", std::ios::out|std::ios::binary|std::ios::trunc);
-  TextWriter writer(&ofs, utf8_encoder, 10);
+  TextWriter writer(&ofs, "UTF-8", 10);
 
   char32_t src_buf[] = U"\U0001F607士大夫士大夫精神放松的防卫任务\U0001F607士大夫士大夫精神放松的防卫任务\U0001F607士大夫士大夫精神放松的防卫任务";
   unsigned int src_n = sizeof(src_buf) / sizeof(src_buf[0]) - 1;
@@ -18,7 +16,7 @@ TEST(TextWriterTest, TextWriterTestCaseUTF8) {
 
   char32_t dst_buf[200];
   std::ifstream ifs("TextWriterTestCaseUTF8.txt", std::ios::in|std::ios::binary);
-  TextReader reader(&ifs, utf8_decoder, 10, true); 
+  TextReader reader(&ifs, "UTF-8", 10); 
 
   unsigned int dst_n = reader.read(dst_buf, 0, 200);
 
@@ -30,7 +28,7 @@ TEST(TextWriterTest, TextWriterTestCaseUTF8) {
 
 TEST(TextWriterTest, TextWriterTestCaseGBK) {
   std::ofstream ofs("TextWriterTestCaseGBK.txt", std::ios::out|std::ios::binary|std::ios::trunc);
-  TextWriter writer(&ofs, gbk_encoder, 10);
+  TextWriter writer(&ofs, "GBK", 10);
 
   char32_t src_buf[] = U"士大夫士大夫精神放松的防卫任务 士大夫士大夫精神放松的防卫任务 士大夫士大夫精神放松的防卫任务";
   unsigned int src_n = sizeof(src_buf) / sizeof(src_buf[0]) - 1;
@@ -40,7 +38,7 @@ TEST(TextWriterTest, TextWriterTestCaseGBK) {
 
   char32_t dst_buf[200];
   std::ifstream ifs("TextWriterTestCaseGBK.txt", std::ios::in|std::ios::binary);
-  TextReader reader(&ifs, gbk_decoder, 10);
+  TextReader reader(&ifs, "GBK", 10);
 
   unsigned int dst_n = reader.read(dst_buf, 0, 200);
 

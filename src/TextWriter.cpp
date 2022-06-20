@@ -1,5 +1,17 @@
 #include "TextWriter.h"
 
+TextWriter::TextWriter(ostream *outputStream, string charsetName, int bufferSize) :
+    out(outputStream), bb(bufferSize), encoder(0) {
+  std::map<string, Charset>::iterator itr = KnownCharsets::charsetTable.find(charsetName);
+  if (itr == KnownCharsets::charsetTable.end()) {
+    throw std::runtime_error("unkown charset: " + charsetName);
+  }
+  if (bufferSize < 8) {
+    throw std::runtime_error("buffer size too small: " + std::to_string(bufferSize));
+  }
+  encoder = itr->second.encoder;
+}
+
 void TextWriter::write(const char32_t* char_buf, unsigned int offset, unsigned int count) {
   unsigned int nencoded;
   if (bb.hasFreeSpace()) {

@@ -3,8 +3,6 @@
 
 #include "ByteBuffer.h"
 
-// GBK decoder, map GBK code to UCS4
-
 void gbk_decoder (
   ByteBuffer *src,
   char32_t *dest_buf,
@@ -12,7 +10,6 @@ void gbk_decoder (
   unsigned int count,
   unsigned int *ndecoded );
 
-// BGK encoder
 void gbk_encoder (
   const char32_t *src_buf,
   unsigned int offset,

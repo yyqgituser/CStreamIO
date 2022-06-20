@@ -1,19 +1,25 @@
 #include "TextReader.h"
+#include "Charsets.h"
 
 using namespace std;
 
-TextReader::TextReader(istream *inputStream, charset_decoder decoder, int bufferSize, bool skipUtf8Bom) :
-  in(inputStream), decoder(decoder), bb(bufferSize) {
+TextReader::TextReader(istream *inputStream, string charsetName, int bufferSize) :
+        in(inputStream), decoder(0), bb(bufferSize) {
+  std::map<string, Charset>::iterator itr = KnownCharsets::charsetTable.find(charsetName);
+  if (itr == KnownCharsets::charsetTable.end()) {
+    throw std::runtime_error("unkown charset: " + charsetName);
+  }  
   if (bufferSize < 8) {
     throw std::runtime_error("buffer size too small: " + std::to_string(bufferSize));
   }
+  decoder = itr->second.decoder;
   inputStream->exceptions(std::ios::badbit);
-  if (skipUtf8Bom) {
+  if (itr->second.hasBom) {
     int nread = doRead();
     if (nread < 3) {
       char *buf = bb.buffer;
-      int c = ((buf[0] & 0xff << 16) | (buf[1] & 0xff << 8) | (buf[2] & 0xff));
-      if (c == UTF8_BOM) {
+      char32_t c = (char32_t)((buf[0] & 0xff << 16) | (buf[1] & 0xff << 8) | (buf[2] & 0xff));
+      if (c == itr->second.bom) {
         bb.skip(3);
       }
     }
